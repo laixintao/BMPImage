@@ -1,0 +1,10 @@
+
+.idea/.name
+.idea/*
+*.doc
+*.o
+*.c
+*.docx
+*.pages
+C_lang/*
+13132*/*
