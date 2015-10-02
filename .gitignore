@@ -8,3 +8,17 @@
 *.pages
 C_lang/*
 13132*/*
+
+*.js
+
+*.html
+
+*.png
+
+*.json
+
+*.css
+
+*.pyc
+
+*.bmp
