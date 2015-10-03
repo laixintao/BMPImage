@@ -22,3 +22,5 @@ C_lang/*
 *.pyc
 
 *.bmp
+
+main.pyc
