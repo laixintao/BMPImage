@@ -1,5 +1,6 @@
 #coding:utf-8
 __author__ = 'laixintao'
+
 import struct
 
 class NotBMPFileRrror(Exception):
@@ -23,8 +24,9 @@ class BMPImage(object):
         else:
             raise NotBMPFileRrror
 
-
     def open(self,filename):
+        "open a bmp file"
+        # todo :should be a static method
         BMPImage.is_bmp_file(filename)
         try:
             self.__file = open(filename)
@@ -50,6 +52,7 @@ class BMPImage(object):
             self.data = []
             for i in range(1024):
                 self.info.append(struct.unpack('B',self.__file.read(1))[0])
+            self.__file.seek(self.offset)
             for i in range(self.width):
                 for j in range(self.height):
                     self.data.append(struct.unpack(
@@ -67,6 +70,18 @@ class BMPImage(object):
             pass
 
     def get_image_info(self):
+        return self.data
+
+    def binaryzation(self,threshold=255/2):
+        "binaryzation a bmp image file"
+        # data = [(lambda i:(i>threshold)*255)(i)
+        #         for i in self.data]
+        data = []
+        for i in self.data:
+            if i>threshold:i=255
+            else:i=0
+            data.append(i)
+        self.data = data
         return self.data
 
     def write_to_new_file(self,filename,threshold=108):
@@ -89,15 +104,16 @@ class BMPImage(object):
         f.write(struct.pack("i",self.important_colors))
         for i in range(1024):
             f.write(struct.pack("B",self.info[i]))
-        oldfile=open(self.filename)
-        oldfile.seek(self.offset)
-        for i in range(self.width):
-            for j in range(self.height):
-                value = struct.unpack("B",oldfile.read(1))[0]
-                if value>threshold:value = 255
-                else :value=0
-                f.write(struct.pack("B",value))
-        oldfile.close()
+        for j in self.data:
+            f.write(struct.pack(
+                "B",j))
         f.close()
         return True
 
+if __name__=="__main__":
+    file = BMPImage("test.bmp")
+    print file.get_image_info()
+    file.binaryzation()
+    print "---"
+    print file.get_image_info()
+    file.write_to_new_file("new_test.bmp")
