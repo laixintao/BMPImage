@@ -11,6 +11,7 @@ class BMPImage(object):
     @staticmethod
     def is_bmp_file(file):
         "Check if the file is a bmpfile"
+        #todo:could be called by object without *file*
         try:
             f = open(file)
             signature = [struct.unpack("c",f.read(1))[0],
@@ -50,14 +51,15 @@ class BMPImage(object):
             self.important_colors = struct.unpack("i",self.__file.read(4))[0]
             self.info = []
             self.data = []
+            self.hist = {}.fromkeys([i for i in range(256)],0)
             for i in range(1024):
                 self.info.append(struct.unpack('B',self.__file.read(1))[0])
             self.__file.seek(self.offset)
             for i in range(self.width):
                 for j in range(self.height):
-                    self.data.append(struct.unpack(
-                        "B",self.__file.read(1)
-                    )[0])
+                    value = struct.unpack("B",self.__file.read(1))[0]
+                    self.data.append(value)
+                    self.hist[value]+=1
         except IOError,e:
             print e
         finally:
@@ -116,4 +118,5 @@ if __name__=="__main__":
     file.binaryzation()
     print "---"
     print file.get_image_info()
+    print file.hist
     file.write_to_new_file("new_test.bmp")
