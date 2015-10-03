@@ -4,7 +4,7 @@ __author__ = 'laixintao'
 
 import unittest
 import os
-
+# from Binaryzation import Binaryzation
 from BMPImage import BMPImage
 
 class BMPImageTestCase(unittest.TestCase):
@@ -31,12 +31,11 @@ class BMPImageTestCase(unittest.TestCase):
         self.assertTrue(isinstance(
             self.bmp.binaryzation(),list
         ))
-    def test_write_to_new_file(self):
-        self.assertTrue(self.bmp.write_to_new_file(self.new_file,
-                                          108))
+
     def tearDown(self):
-        if os.path.isfile(self.new_file):
-            os.remove(self.new_file)
+        # if os.path.isfile(self.new_file):
+        #     os.remove(self.new_file)
+        self.bmp.write_to_new_file(self.new_file)
         pass
 
 if __name__ == "__main__":

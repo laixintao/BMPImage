@@ -3,7 +3,7 @@ __author__ = 'laixintao'
 
 import struct
 
-class NotBMPFileRrror(Exception):
+class NotBMPFileError(Exception):
     pass
 
 class BMPImage(object):
@@ -23,7 +23,7 @@ class BMPImage(object):
         if signature[0]=="B" and signature[1]=="M":
             return True
         else:
-            raise NotBMPFileRrror
+            raise NotBMPFileError
 
     def open(self,filename):
         "open a bmp file"
@@ -74,19 +74,7 @@ class BMPImage(object):
     def get_image_info(self):
         return self.data
 
-    def binaryzation(self,threshold=255/2):
-        "binaryzation a bmp image file"
-        # data = [(lambda i:(i>threshold)*255)(i)
-        #         for i in self.data]
-        data = []
-        for i in self.data:
-            if i>threshold:i=255
-            else:i=0
-            data.append(i)
-        self.data = data
-        return self.data
-
-    def write_to_new_file(self,filename,threshold=108):
+    def write_to_new_file(self,filename):
         f = open(filename,"wb")
         f.write(struct.pack("c",self.signature[0]))
         f.write(struct.pack("c",self.signature[1]))
@@ -107,10 +95,39 @@ class BMPImage(object):
         for i in range(1024):
             f.write(struct.pack("B",self.info[i]))
         for j in self.data:
-            f.write(struct.pack(
-                "B",j))
+            f.write(struct.pack("B",j))
         f.close()
         return True
+
+    def binaryzation(self,method="mean"):
+        "binaryzation for a bmp image"
+        # choose a method,default is mean
+        if method == "mean":
+            threshold = self.threshold_by_mean()
+        elif method == "P-Tile":
+            pass
+
+        tempdata = []
+        for i in self.data:
+            if i>threshold: i=255
+            else: i=0
+            tempdata.append(i)
+        self.data = tempdata
+        return self.data
+
+
+    def threshold_by_mean(self):
+        hist = self.hist
+        Sum = 0
+        Amount = 0
+        for i in range(256):
+            Amount += hist[i]
+            Sum += hist[i] * i
+        return Sum/Amount
+
+    def threshold_by_PTile(self):
+        pass
+
 
 if __name__=="__main__":
     file = BMPImage("test.bmp")
