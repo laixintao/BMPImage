@@ -9,10 +9,10 @@ from BMPImage import BMPImage
 
 class BMPImageTestCase(unittest.TestCase):
     def setUp(self):
-        self.filename = "test.bmp"
+        self.filename = "LENA.bmp"
         self.bmp = BMPImage()
         self.bmp.open(filename=self.filename)
-        self.new_file = "temp_test.bmp"
+        # self.new_file = "temp_test.bmp"
 
     def test_bmp_exists(self):
         self.assertTrue(self.bmp is not None)
@@ -25,14 +25,20 @@ class BMPImageTestCase(unittest.TestCase):
         self.assertTrue(isinstance(
             self.bmp.data,list ))
 
-    def test_binaryzation_by(self):
+    def test_binaryzation_by_mean(self):
         self.assertTrue(isinstance(
             self.bmp.binaryzation(),list))
+        self.assertTrue(self.bmp.write_to_new_file("test.bmp"))
+
+    def test_binaryzation_by_PTile(self):
+        self.assertTrue(isinstance(
+            self.bmp.binaryzation(method="P-Tile"),list
+        ))
+        self.assertTrue(self.bmp.write_to_new_file("test.bmp"))
 
     def tearDown(self):
-        # if os.path.isfile(self.new_file):
-        #     os.remove(self.new_file)
-        self.bmp.write_to_new_file(self.new_file)
+        for filename in os.listdir("."):
+            print filename
         pass
 
 if __name__ == "__main__":

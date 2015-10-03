@@ -81,7 +81,7 @@ class BMPImage(object):
         if filedata == "bzdata":
             data = self.binaryzation_data
             filename = "binary_"+\
-                       self.binaryzation_method+"_"+filename
+                       self.binaryzation_method+"_"+str(filename)
         f = open(filename,"wb")
         f.write(struct.pack("c",self.signature[0]))
         f.write(struct.pack("c",self.signature[1]))
@@ -116,7 +116,7 @@ class BMPImage(object):
         elif method == "mean":
             threshold = self.threshold_by_mean()
         elif method == "P-Tile":
-            pass
+            threshold = self.threshold_by_PTile()
         tempdata = []
         for i in self.data:
             if i>threshold: i=255
@@ -135,12 +135,21 @@ class BMPImage(object):
             Sum += hist[i] * i
         return Sum/Amount
 
-    def threshold_by_PTile(self):
-        pass
+    def threshold_by_PTile(self,tile=50):
+        Amount = 0
+        sum = 0
+        for i in range(256):
+            Amount += self.hist[i]
+        front_pix = Amount * tile / 100
+        for i in range(256):
+            sum += self.hist[i]
+            if sum >= front_pix:
+                return i
+        return -1
 
 
 if __name__=="__main__":
-    file = BMPImage("test.bmp")
+    file = BMPImage("LENA.bmp")
     # print file.get_image_info()
     file.binaryzation(threshold=50)
     print "---"
