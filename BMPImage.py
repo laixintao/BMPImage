@@ -66,6 +66,9 @@ class BMPImage(object):
             self.__file.close()
 
     def __init__(self,filename="__None"):
+        self.is_binaryzation = False
+        self.binaryzation_data = []
+        self.binaryzation_method = None
         if filename != "__None":
             self.open(filename)
         else:
@@ -74,7 +77,11 @@ class BMPImage(object):
     def get_image_info(self):
         return self.data
 
-    def write_to_new_file(self,filename):
+    def write_to_new_file(self,filename,filedata="bzdata"):
+        if filedata == "bzdata":
+            data = self.binaryzation_data
+            filename = "binary_"+\
+                       self.binaryzation_method+"_"+filename
         f = open(filename,"wb")
         f.write(struct.pack("c",self.signature[0]))
         f.write(struct.pack("c",self.signature[1]))
@@ -94,26 +101,29 @@ class BMPImage(object):
         f.write(struct.pack("i",self.important_colors))
         for i in range(1024):
             f.write(struct.pack("B",self.info[i]))
-        for j in self.data:
+        for j in data:
             f.write(struct.pack("B",j))
         f.close()
         return True
 
-    def binaryzation(self,method="mean"):
+    def binaryzation(self,method="mean",threshold=None):
         "binaryzation for a bmp image"
         # choose a method,default is mean
-        if method == "mean":
+        self.is_binaryzation = True
+        self.binaryzation_method = method
+        if threshold is not None:
+            self.binaryzation_method = "threshold"+str(threshold)
+        elif method == "mean":
             threshold = self.threshold_by_mean()
         elif method == "P-Tile":
             pass
-
         tempdata = []
         for i in self.data:
             if i>threshold: i=255
             else: i=0
             tempdata.append(i)
-        self.data = tempdata
-        return self.data
+        self.binaryzation_data = tempdata
+        return self.binaryzation_data
 
 
     def threshold_by_mean(self):
@@ -131,9 +141,9 @@ class BMPImage(object):
 
 if __name__=="__main__":
     file = BMPImage("test.bmp")
-    print file.get_image_info()
-    file.binaryzation()
+    # print file.get_image_info()
+    file.binaryzation(threshold=50)
     print "---"
-    print file.get_image_info()
-    print file.hist
+    # print file.get_image_info()
+    # print file.hist
     file.write_to_new_file("new_test.bmp")

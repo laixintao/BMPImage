@@ -19,18 +19,15 @@ class BMPImageTestCase(unittest.TestCase):
 
     def test_is_bmp_file(self):
         self.assertTrue(self.bmp.is_bmp_file(
-            self.filename
-        ))
+            self.filename))
 
     def test_get_image_info(self):
         self.assertTrue(isinstance(
-            self.bmp.data,list
-        ))
+            self.bmp.data,list ))
 
-    def test_binaryzation(self):
+    def test_binaryzation_by(self):
         self.assertTrue(isinstance(
-            self.bmp.binaryzation(),list
-        ))
+            self.bmp.binaryzation(),list))
 
     def tearDown(self):
         # if os.path.isfile(self.new_file):
