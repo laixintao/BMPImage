@@ -38,7 +38,8 @@ class BMPImageTestCase(unittest.TestCase):
 
     def tearDown(self):
         for filename in os.listdir("."):
-            print filename
+            if filename.endswith("test.bmp"):
+                os.remove(filename)
         pass
 
 if __name__ == "__main__":

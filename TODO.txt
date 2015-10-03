@@ -1,0 +1,3 @@
+
+- 13+way to calculate the threshold
+- binaryzation method should be (* **) way
